@@ -17,3 +17,31 @@ Before you begin, make sure the following is true about your environment:
 If all goes well, your installation of FusionPBX will be unaffected (i.e., any customizations you’ve done will survice), but you will now enjoy the benefits of having the latest stable version of FreeSWITCH which is easily maintained by APT (using apt-get upgrade and/or apt-get dist-upgrade).
 
 An added benefit is that installing modules will be much easier – as simple as “apt-get install freeswitch-mod-shout” for example.  It’ll get installed, configured, and enabled for you.
+
+##**Okay, some housekeeping:**##
+If you are as cautious as I am, and this server is a VPS – ##TAKE A SNAPSHOT NOW!!!##
+If not a VPS, then you may want to opt for rename (_wherever a delete is specified_).  In case anything goes wrong, simply go back and rename the folders back to what they were.  I would recommend a suffix like “_old”.
+
+
+##**Usage:**##
+To use this script, simply choose one of the following approaches..
+
+#**Automatic Approach**#
+---
+1. Open the Command Line Interface (CLI) and clone this repo
+```
+git clone https://github.com/kismetgerald/fusionpbx-migrate-fs-src2pkg.git
+```
+2. Change into the cloned directory
+```
+cd fusionpbx-migrate-fs-src2pkg/
+```
+3. Make the script executable
+```
+chmod +x migrate_fs_src2pkg.sh
+```
+4. Run it
+```
+./migrate_fs_src2pkg.sh
+```
+
