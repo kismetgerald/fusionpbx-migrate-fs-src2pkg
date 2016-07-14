@@ -30,9 +30,9 @@ To use this script, simply choose one of the following approaches..
 ---
 1. Open the Command Line Interface (CLI) and run the following commands
 ```
-git clone https://github.com/kismetgerald/fusionpbx-migrate-fs-src2pkg.git
-cd fusionpbx-migrate-fs-src2pkg/
-chmod +x migrate_fs_src2pkg.sh
-./migrate_fs_src2pkg.sh
+* git clone https://github.com/kismetgerald/fusionpbx-migrate-fs-src2pkg.git
+* cd fusionpbx-migrate-fs-src2pkg/
+* chmod +x migrate_fs_src2pkg.sh
+* ./migrate_fs_src2pkg.sh
 ```
 
