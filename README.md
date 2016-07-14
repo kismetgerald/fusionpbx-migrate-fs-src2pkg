@@ -28,20 +28,11 @@ To use this script, simply choose one of the following approaches..
 
 #**Automatic Approach**#
 ---
-1. Open the Command Line Interface (CLI) and clone this repo
+1. Open the Command Line Interface (CLI) and run the following commands
 ```
 git clone https://github.com/kismetgerald/fusionpbx-migrate-fs-src2pkg.git
-```
-2. Change into the cloned directory
-```
 cd fusionpbx-migrate-fs-src2pkg/
-```
-3. Make the script executable
-```
 chmod +x migrate_fs_src2pkg.sh
-```
-4. Run it
-```
 ./migrate_fs_src2pkg.sh
 ```
 
