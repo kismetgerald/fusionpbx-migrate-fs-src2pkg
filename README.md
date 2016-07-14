@@ -23,10 +23,10 @@ If you are as cautious as I am, and this server is a VPS – ##TAKE A SNAPSHOT N
 If not a VPS, then you may want to opt for rename (_wherever a delete is specified_).  In case anything goes wrong, simply go back and rename the folders back to what they were.  I would recommend a suffix like “_old”.
 
 
-##**Usage:**##
+#**Usage:**#
 To use this script, simply choose one of the following approaches..
 
-#**Automatic Approach**#
+##**Automatic Approach**##
 ---
 Open the Command Line Interface (CLI) and run the following commands
 * git clone https://github.com/kismetgerald/fusionpbx-migrate-fs-src2pkg.git
@@ -34,3 +34,6 @@ Open the Command Line Interface (CLI) and run the following commands
 * chmod +x migrate_fs_src2pkg.sh
 * ./migrate_fs_src2pkg.sh
 
+##**Manual Approach**##
+---
+If you're the more hands-on type and want to get your hands dirty with the CLI, then this options is best for you.  Simply reference the PDF instructions I put together.  Here's the link:  https://github.com/kismetgerald/fusionpbx-migrate-fs-src2pkg/blob/master/Instructions.pdf
