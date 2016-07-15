@@ -24,15 +24,16 @@ main ()
     #Next we rename existing directories which will prevent the package install
     #We first check if they exist then rename them
     #If they don't exist, then just rename and move on
-    echo "Renaming $fs_pkg_conf_dir (if it exists) to $fs_pkg_conf_dir\_old"
-    if [ -f "$fs_pkg_conf_dir" ];
-      then mv "$fs_pkg_conf_dir" "$fs_pkg_conf_dir\_old"
+    echo "Renaming $fs_pkg_conf_dir (if it exists) to $fs_pkg_conf_dir""_old"
+    if [ -d "$fs_pkg_conf_dir" ]
+      then mv "$fs_pkg_conf_dir" "$fs_pkg_conf_dir"\_old
     fi
 
-    echo "Renaming $fs_path to $fs_path\_old" 
-    mv "$fs_path" "$fs_path\_old"
+    echo "Renaming $fs_path to $fs_path""_old" 
+    mv "$fs_path" "$fs_path"\_old
 
-
+  else
+    exit 1
 
   fi
 
@@ -111,7 +112,8 @@ echo "Checking for the existence of FreeSWITCH..."
       echo ""
       echo "The traditional FreeSWITCH path ($fs_path) was not detected, as such, this script will stop execution."
       echo ""
-      sleep 5
+      sleep 3
+      exit 1
   fi
 }
 
@@ -157,4 +159,6 @@ DELIM
 
 # BEGIN SCRIPT EXECUTION
 main
+echo "Done!"
+echo
 exit 1
