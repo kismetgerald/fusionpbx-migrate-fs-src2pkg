@@ -7,19 +7,17 @@ fpbx_path="/var/www/fusionpbx"
 # Functions
 main ()
 {
-  detect_os
-  switch_check
-
   echo "$LICENSE"
 
   read -p "Shall we proceed? [Y/N] " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
-    echo "Operating System detected is =====>>>> $os/$dist"
-    echo "Existing FreeSWITCH detected at =====>>>> $fs_path"
-    echo "FusionPBX detected at =====>>>> $fpbx_path"
-  
+    detect_os
+    switch_check
+    #echo "Operating System detected is =====>>>> $os/$dist"
+    #echo "Existing FreeSWITCH detected at =====>>>> $fs_path"
+    echo "FusionPBX is assumed to be at =====>>>> $fpbx_path"
   fi
 
 }
@@ -82,6 +80,7 @@ unknown_os ()
   echo ""
   echo "Exiting...."
   echo ""
+  sleep 5
 }
 
 switch_check ()
@@ -97,6 +96,7 @@ echo "Checking for the existence of FreeSWITCH..."
       echo ""
       echo "The traditional FreeSWITCH path ($fs_path) was not detected, as such, this script will stop execution."
       echo ""
+      sleep 5
   fi
 }
 
