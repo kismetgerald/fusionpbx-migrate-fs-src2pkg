@@ -2,6 +2,7 @@
 
 #Define global variables
 fs_path="/usr/local/freeswitch"
+fs_pkg_conf_dir="/etc/freeswitch"
 fpbx_path="/var/www/fusionpbx"
 
 # Functions
@@ -15,9 +16,24 @@ main ()
   then
     detect_os
     switch_check
-    #echo "Operating System detected is =====>>>> $os/$dist"
-    #echo "Existing FreeSWITCH detected at =====>>>> $fs_path"
-    echo "FusionPBX is assumed to be at =====>>>> $fpbx_path"
+
+    #First we stop the FreeSWITCH service
+    echo "Stopping FreeSWITCH..."
+    systemctl stop freeswitch
+
+    #Next we rename existing directories which will prevent the package install
+    #We first check if they exist then rename them
+    #If they don't exist, then just rename and move on
+    echo "Renaming $fs_pkg_conf_dir (if it exists) to $fs_pkg_conf_dir\_old"
+    if [ -f "$fs_pkg_conf_dir" ];
+      then mv "$fs_pkg_conf_dir" "$fs_pkg_conf_dir\_old"
+    fi
+
+    echo "Renaming $fs_path to $fs_path\_old" 
+    mv "$fs_path" "$fs_path\_old"
+
+
+
   fi
 
 }
@@ -90,7 +106,6 @@ echo "Checking for the existence of FreeSWITCH..."
     then
       echo "Excellent!  The FreeSWITCH directory ($fs_path) was found so let's continue."
       echo ""
-      detect_os
     else
       echo "Error: Directory $fs_path does not exists."
       echo ""
