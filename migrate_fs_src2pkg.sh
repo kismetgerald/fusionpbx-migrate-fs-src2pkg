@@ -8,7 +8,8 @@ fpbx_path="/var/www/fusionpbx"
 # Functions
 main ()
 {
-  echo "$LICENSE"
+  clear
+  echo "${LICENSE}"
 
   read -p "Shall we proceed? [Y/N] " -n 1 -r
   echo
@@ -24,13 +25,13 @@ main ()
     #Next we rename existing directories which will prevent the package install
     #We first check if they exist then rename them
     #If they don't exist, then just rename and move on
-    echo "Renaming $fs_pkg_conf_dir (if it exists) to $fs_pkg_conf_dir""_old"
-    if [ -d "$fs_pkg_conf_dir" ]
-      then mv "$fs_pkg_conf_dir" "$fs_pkg_conf_dir"\_old
+    echo "Renaming ${fs_pkg_conf_dir} (if it exists) to ${fs_pkg_conf_dir}""_old"
+    if [ -d "${fs_pkg_conf_dir}" ]
+      then mv "${fs_pkg_conf_dir}" "${fs_pkg_conf_dir}"\_old
     fi
 
-    echo "Renaming $fs_path to $fs_path""_old" 
-    mv "$fs_path" "$fs_path"\_old
+    echo "Renaming ${fs_path} to ${fs_path}""_old" 
+    mv "${fs_path}" "${fs_path}"\_old
 
   else
     exit 1
@@ -54,7 +55,7 @@ detect_os ()
         os=${DISTRIB_ID}
         dist=${DISTRIB_CODENAME}
 
-        if [ -z "$dist" ]; then
+        if [ -z "${dist}" ]; then
           dist=${DISTRIB_RELEASE}
         fi
       fi
@@ -78,7 +79,7 @@ detect_os ()
     fi
   fi
 
-  if [ -z "$dist" ]; then
+  if [ -z "${dist}" ]; then
     unknown_os
   fi
 
@@ -86,7 +87,7 @@ detect_os ()
   os="${os// /}"
   dist="${dist// /}"
 
-  echo "Detected operating system as $os/$dist."
+  echo "Detected operating system as ${os}/${dist}."
   echo ""
 }
 
@@ -103,14 +104,14 @@ unknown_os ()
 switch_check ()
 {
 echo "Checking for the existence of FreeSWITCH..."
-  if [ -d "$fs_path" ]
+  if [ -d "${fs_path}" ]
     then
-      echo "Excellent!  The FreeSWITCH directory ($fs_path) was found so let's continue."
+      echo "Excellent!  The FreeSWITCH directory (${fs_path}) was found so let's continue."
       echo ""
     else
-      echo "Error: Directory $fs_path does not exists."
+      echo "Error: Directory ${fs_path} does not exists."
       echo ""
-      echo "The traditional FreeSWITCH path ($fs_path) was not detected, as such, this script will stop execution."
+      echo "The traditional FreeSWITCH path (${fs_path}) was not detected, as such, this script will stop execution."
       echo ""
       sleep 3
       exit 1
