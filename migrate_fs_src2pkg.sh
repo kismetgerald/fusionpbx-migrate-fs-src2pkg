@@ -5,6 +5,7 @@ fs_path="/usr/local/freeswitch"
 fs_pkg_conf_dir="/etc/freeswitch"
 fpbx_path="/var/www/fusionpbx"
 fpbx_src_path="/usr/src/fusionpbx-install.sh/debian/resources/switch/"
+#TO-DO:  Read the db credentials (username & password) from /var/www/fusionpbx/resources/config.php and set it to a variable
 
 # Functions
 main ()
