@@ -4,6 +4,7 @@
 fs_path="/usr/local/freeswitch"
 fs_pkg_conf_dir="/etc/freeswitch"
 fpbx_path="/var/www/fusionpbx"
+fpbx_src_path="/usr/src/fusionpbx-install.sh/debian/resources/switch/"
 
 # Functions
 main ()
@@ -26,18 +27,65 @@ main ()
     #We first check if they exist then rename them
     #If they don't exist, then just rename and move on
     echo "Renaming ${fs_pkg_conf_dir} (if it exists) to ${fs_pkg_conf_dir}""_old"
-    if [ -d "${fs_pkg_conf_dir}" ]
+    if [ -d "${fs_pkg_conf_dir}" ] 
       then mv "${fs_pkg_conf_dir}" "${fs_pkg_conf_dir}"\_old
     fi
 
     echo "Renaming ${fs_path} to ${fs_path}""_old" 
     mv "${fs_path}" "${fs_path}"\_old
 
-  else
-    exit 1
+    echo "Checking for the FusionPBX install folder"
+    if [ -d "${fpbx_src_path}" ] 
+      then
+      echo "FusionPBX install folder found at ${fpbx_src_path}, switching to it."
+      cd ${fpbx_src_path}
+      cd /usr/src
+      else
+        echo "FusionPBX install folder was not found, so let's get it."
+        cd /usr/src
+        git clone https://github.com/fusionpbx/fusionpbx-install.sh.git
+        chmod 755 -R /usr/src/fusionpbx-install.sh
+        cd /usr/src/fusionpbx-install.sh/debian/resources/switch/
+      fi
+    fi
 
-  fi
+    echo "Ready to install FreeSWITCH"
+    sleep 2
+    echo "Please make a selection: [1] Official Release [2], Official Release with ALL MODULES, or [3] Master Branch"
+    read answer
+    if [[ ${answer} == 1 ]] 
+      then ./package-release.sh
 
+    elif [[ ${answer} == 2 ]]; 
+      then ./package-all.sh
+
+    elif [[ ${answer} == 3 ]]; 
+      then ./package-master-all.sh
+    fi
+
+    # TO-DO:  Check PostgreSQL db for the existence of the v_default_settings tables.  If it exists;
+    # 1.  Count how many records exist where (default_setting_category = switch) - should be 17
+    # 2.  Iterate through each record and verify that they are set correctly (as follows):
+    #       COLUMNS --> default_setting_subcategory   default_setting_name    default_setting_value                 default_setting_enabled
+    #                   base                          dir                     /usr                                  true
+    #                   bin                           dir                     null                                  true
+    #                   call_center                   dir                     /etc/freeswitch/autoload_configs      false
+    #                   conf                          dir                     /etc/freeswitch                       true
+    #                   db                            dir                     /var/lib/freeswitch/db                true
+    #                   diaplan                       dir                     /etc/freeswitch/dialplan              false
+    #                   extensions                    dir                     /etc/freeswitch/directory             false
+    #                   grammar                       dir                     /usr/share/freeswitch/grammar         true
+    #                   log                           dir                     /var/log/freeswitch                   true
+    #                   mod                           dir                     /usr/lib/freeswitch/mod               true
+    #                   phrases                       dir                     /etc/freeswitch/lang                  false
+    #                   recordings                    dir                     /var/lib/freeswitch/recordings        true
+    #                   scripts                       dir                     /usr/share/freeswitch/scripts         true
+    #                   sip_profiles                  dir                     /etc/freeswitch/sip_profiles          false
+    #                   sounds                        dir                     /usr/share/freeswitch/sounds          true
+    #                   storage                       dir                     /var/lib/freeswitch/storage           true
+    #                   voicemail                     dir                     /var/lib/freeswitch/storage/voicemail true
+    # 3.  If the above two db checks pass, then we can assume the user has successfully updated the switch paths in Default Settings
+    #     We should now be able to proceed with the next steps 3(e).
 }
 
 detect_os ()
