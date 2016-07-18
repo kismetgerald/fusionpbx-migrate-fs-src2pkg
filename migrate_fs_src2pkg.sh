@@ -65,9 +65,10 @@ main ()
       then ./package-master-all.sh
     fi
 
-    # TO-DO:  Check PostgreSQL db for the existence of the v_default_settings tables.  If it exists;
-    # 1.  Count how many records exist where (default_setting_category = switch) - should be 17
-    # 2.  Iterate through each record and verify that they are set correctly (as follows):
+    # TO-DO:  
+    # 1.  Check PostgreSQL db for the existence of the v_default_settings tables.  If it exists;
+    # 2.  Count how many records exist where (default_setting_category = switch) - should be 17
+    # 3.  Iterate through each record and verify that they are set correctly (as follows):
     #       COLUMNS --> default_setting_subcategory   default_setting_name    default_setting_value                 default_setting_enabled
     #                   base                          dir                     /usr                                  true
     #                   bin                           dir                     null                                  true
@@ -86,7 +87,7 @@ main ()
     #                   sounds                        dir                     /usr/share/freeswitch/sounds          true
     #                   storage                       dir                     /var/lib/freeswitch/storage           true
     #                   voicemail                     dir                     /var/lib/freeswitch/storage/voicemail true
-    # 3.  If the above two db checks pass, then we can assume the user has successfully updated the switch paths in Default Settings
+    # 4.  If the above three db checks pass, then we can assume the user has successfully updated the switch paths in Default Settings
     #     We should now be able to proceed with the next steps 3(e).
 
 }
@@ -174,8 +175,10 @@ getdb()
   # Check the two locations where the FusionPBX config file could be, and extract the database credentials
   # which we will use to build our connection string
   if [[ -f "/etc/fusionpbx/config.lua" ]]; then 
+    echo "Retrieving database info from /etc/fusionpbx/config.lua to build the connection string..."
     dbconn=$(sed -rn 's/database\.system\s*=\s*"(.*)";/\1/p' /etc/fusionpbx/config.lua)
   elif [[ -f "/usr/local/freeswitch/scripts/resources/config.lua" ]]; then
+    echo "Retrieving database info from /usr/local/freeswitch/scripts/resources/config.lua to build the connection string..."
     dbconn=$(sed -rn 's/database\.system\s*=\s*"(.*)";/\1/p' /usr/local/freeswitch/scripts/resources/config.lua)
   fi
 }
