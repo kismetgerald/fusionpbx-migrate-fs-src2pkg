@@ -6,6 +6,7 @@ fs_pkg_conf_dir="/etc/freeswitch"
 fpbx_path="/var/www/fusionpbx"
 fpbx_src_path="/usr/src/fusionpbx-install.sh/debian/resources/switch/"
 #TO-DO:  Read the db credentials (username & password) from /var/www/fusionpbx/resources/config.php and set it to a variable
+# Gonna use function getdb() to accomplish this and the results will be used to accomplish line #91
 
 # Functions
 main ()
@@ -87,6 +88,7 @@ main ()
     #                   voicemail                     dir                     /var/lib/freeswitch/storage/voicemail true
     # 3.  If the above two db checks pass, then we can assume the user has successfully updated the switch paths in Default Settings
     #     We should now be able to proceed with the next steps 3(e).
+
 }
 
 detect_os ()
@@ -167,6 +169,17 @@ echo "Checking for the existence of FreeSWITCH..."
   fi
 }
 
+getdb()
+{
+  # Check the two locations where the FusionPBX config file could be, and extract the database credentials
+  # which we will use to build our connection string
+  if [[ -f "/etc/fusionpbx/config.lua" ]]; then 
+    dbconn=$(sed -rn 's/database\.system\s*=\s*"(.*)";/\1/p' /etc/fusionpbx/config.lua)
+  elif [[ -f "/usr/local/freeswitch/scripts/resources/config.lua" ]]; then
+    dbconn=$(sed -rn 's/database\.system\s*=\s*"(.*)";/\1/p' /usr/local/freeswitch/scripts/resources/config.lua)
+  fi
+}
+
 LICENSE=$( cat << DELIM
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -208,6 +221,7 @@ DELIM
 )
 
 # BEGIN SCRIPT EXECUTION
+getdb
 main
 echo "Done!"
 echo
