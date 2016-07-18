@@ -90,6 +90,32 @@ main ()
     # 4.  If the above three db checks pass, then we can assume the user has successfully updated the switch paths in Default Settings
     #     We should now be able to proceed with the next steps 3(e).
 
+
+  # Step 4(e)(a)
+  echo "Deleting switch configs pulled down by the package install from /etc/freeswitch ..."
+  rm -rf /etc/freeswitch/*
+  echo "Done"
+
+  # Step 4(e)(b)
+  echo "Restoring switch configs from /usr/local/freeswitch_old/* to /etc/freeswitch ..."
+  cp -ar /usr/local/freeswitch_old/conf/* /etc/freeswitch
+  echo "Done"
+
+  # Step 4(e)(c)
+  echo "Patching the lua.conf.xml file so it points to the new scripts directory ..."
+  sed -i 's~base_dir}/scripts~script_dir}~' /etc/freeswitch/autoload_configs/lua.conf.xml
+
+  # Step 4(f)
+  # Let's fix permissions and restart the various services.
+  cd "${fpbx_src_path}"
+  ./package-permissions.sh
+  systemctl daemon-reload
+  systemctl try-restart freeswitch
+  systemctl daemon-reload
+  systemctl restart php5-fpm
+  systemctl restart nginx
+
+
 }
 
 detect_os ()
