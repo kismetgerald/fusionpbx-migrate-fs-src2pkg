@@ -21,13 +21,15 @@ main ()
     detect_os
     switch_check
 
-    #First we stop the FreeSWITCH service
+    # Step 1:
+    # First we stop the FreeSWITCH service
     echo "Stopping FreeSWITCH..."
     systemctl stop freeswitch
 
-    #Next we rename existing directories which will prevent the package install
-    #We first check if they exist then rename them
-    #If they don't exist, then just rename and move on
+    # Step 2:
+    # Rename existing directories which will prevent the package install
+    # We first check if they exist then rename them
+    # If they don't exist, then just rename and move on
     echo "Renaming ${fs_pkg_conf_dir} (if it exists) to ${fs_pkg_conf_dir}""_old"
     if [ -d "${fs_pkg_conf_dir}" ] 
       then mv "${fs_pkg_conf_dir}" "${fs_pkg_conf_dir}"\_old
@@ -39,9 +41,8 @@ main ()
     echo "Checking for the FusionPBX install folder"
     if [ -d "${fpbx_src_path}" ] 
       then
-      echo "FusionPBX install folder found at ${fpbx_src_path}, switching to it."
-      cd ${fpbx_src_path}
-      cd /usr/src
+        echo "FusionPBX install folder found at ${fpbx_src_path}, switching to it."
+        cd ${fpbx_src_path}
       else
         echo "FusionPBX install folder was not found, so let's get it."
         cd /usr/src
@@ -51,18 +52,20 @@ main ()
       fi
     fi
 
+    # Step 3:
+    # Install FreeSWITCH
     echo "Ready to install FreeSWITCH"
     sleep 2
     echo "Please make a selection: [1] Official Release [2], Official Release with ALL MODULES, or [3] Master Branch"
     read answer
-    if [[ ${answer} == 1 ]] 
-      then ./package-release.sh
+    if [[ ${answer} == 1 ]]; then 
+      ./package-release.sh
 
-    elif [[ ${answer} == 2 ]]; 
-      then ./package-all.sh
+    elif [[ ${answer} == 2 ]]; then 
+      ./package-all.sh
 
-    elif [[ ${answer} == 3 ]]; 
-      then ./package-master-all.sh
+    elif [[ ${answer} == 3 ]]; then 
+      ./package-master-all.sh
     fi
 
     # TO-DO:  
@@ -91,21 +94,21 @@ main ()
     #     We should now be able to proceed with the next steps 3(e).
 
 
-  # Step 4(e)(a)
+  # Step 5(a) 
   echo "Deleting switch configs pulled down by the package install from /etc/freeswitch ..."
   rm -rf /etc/freeswitch/*
   echo "Done"
 
-  # Step 4(e)(b)
+  # Step 5(b)
   echo "Restoring switch configs from /usr/local/freeswitch_old/* to /etc/freeswitch ..."
   cp -ar /usr/local/freeswitch_old/conf/* /etc/freeswitch
   echo "Done"
 
-  # Step 4(e)(c)
+  # Step 5(c)
   echo "Patching the lua.conf.xml file so it points to the new scripts directory ..."
   sed -i 's~base_dir}/scripts~script_dir}~' /etc/freeswitch/autoload_configs/lua.conf.xml
 
-  # Step 4(f)
+  # Step 6
   # Let's fix permissions and restart the various services.
   cd "${fpbx_src_path}"
   ./package-permissions.sh
