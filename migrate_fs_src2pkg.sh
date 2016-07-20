@@ -89,7 +89,50 @@ main ()
     #               storage                       dir                     /var/lib/freeswitch/storage           true
     #               voicemail                     dir                     /var/lib/freeswitch/storage/voicemail true
     echo "Now updating switch paths in FusionPBX's Default Settings ..."
-    
+    cd /tmp
+    sudo -u postgres -- psql -d fusionpbx -t -c "UPDATE v_default_settings
+          SET default_setting_value = CASE
+          WHEN default_setting_subcategory = 'base' THEN '/usr'
+          WHEN default_setting_subcategory = 'bin' THEN ''
+          WHEN default_setting_subcategory = 'call_center' THEN '/etc/freeswitch/autoload_configs'
+          WHEN default_setting_subcategory = 'conf' THEN '/etc/freeswitch'
+          WHEN default_setting_subcategory = 'db' THEN '/var/lib/freeswitch/db'
+          WHEN default_setting_subcategory = 'dialplan' THEN '/etc/freeswitch/dialplan'
+          WHEN default_setting_subcategory = 'extensions' THEN '/etc/freeswitch/directory'
+          WHEN default_setting_subcategory = 'grammar' THEN '/usr/share/freeswitch/grammar'
+          WHEN default_setting_subcategory = 'log' THEN '/var/log/freeswitch'
+          WHEN default_setting_subcategory = 'mod' THEN '/usr/lib/freeswitch/mod'
+          WHEN default_setting_subcategory = 'phrases' THEN '/etc/freeswitch/lang'
+          WHEN default_setting_subcategory = 'recordings' THEN '/var/lib/freeswitch/recordings'
+          WHEN default_setting_subcategory = 'scripts' THEN '/usr/share/freeswitch/scripts'
+          WHEN default_setting_subcategory = 'sip_profiles' THEN '/etc/freeswitch/sip_profiles'
+          WHEN default_setting_subcategory = 'sounds' THEN '/usr/share/freeswitch/sounds'
+          WHEN default_setting_subcategory = 'storage' THEN '/var/lib/freeswitch/storage'
+          WHEN default_setting_subcategory = 'voicemail' THEN '/var/lib/freeswitch/storage/voicemail'
+          END,
+          default_setting_enabled = CASE
+          WHEN default_setting_subcategory = 'base' THEN 'true'
+          WHEN default_setting_subcategory = 'bin' THEN 'true'
+          WHEN default_setting_subcategory = 'call_center' THEN 'false'
+          WHEN default_setting_subcategory = 'conf' THEN 'true'
+          WHEN default_setting_subcategory = 'db' THEN 'true'
+          WHEN default_setting_subcategory = 'dialplan' THEN 'false'
+          WHEN default_setting_subcategory = 'extensions' THEN 'false'
+          WHEN default_setting_subcategory = 'grammar' THEN 'true'
+          WHEN default_setting_subcategory = 'log' THEN 'true'
+          WHEN default_setting_subcategory = 'mod' THEN 'true'
+          WHEN default_setting_subcategory = 'phrases' THEN 'false'
+          WHEN default_setting_subcategory = 'recordings' THEN 'true'
+          WHEN default_setting_subcategory = 'scripts' THEN 'true'
+          WHEN default_setting_subcategory = 'sip_profiles' THEN 'false'
+          WHEN default_setting_subcategory = 'sounds' THEN 'true'
+          WHEN default_setting_subcategory = 'storage' THEN 'true'
+          WHEN default_setting_subcategory = 'voicemail' THEN 'true'
+          END
+          WHERE default_setting_subcategory IN ('base','bin','call_center','conf','db','dialplan','extensions','grammar','log','mod','phrases','recordings','scripts','sip_profiles','sounds','storage','voicemail');"
+    echo ""
+    echo "Done updating switch path variables in the database ..."
+    cd ${fpbx_src_path}
 
 
   # Step 5(a) 
@@ -255,4 +298,4 @@ getdb
 main
 echo "Done!"
 echo
-exit 1
+exit
