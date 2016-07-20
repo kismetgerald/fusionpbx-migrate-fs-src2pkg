@@ -68,30 +68,28 @@ main ()
       ./package-master-all.sh
     fi
 
-    # TO-DO:  
-    # 1.  Check PostgreSQL db for the existence of the v_default_settings tables.  If it exists;
-    # 2.  Count how many records exist where (default_setting_category = switch) - should be 17
-    # 3.  Iterate through each record and verify that they are set correctly (as follows):
-    #       COLUMNS --> default_setting_subcategory   default_setting_name    default_setting_value                 default_setting_enabled
-    #                   base                          dir                     /usr                                  true
-    #                   bin                           dir                     null                                  true
-    #                   call_center                   dir                     /etc/freeswitch/autoload_configs      false
-    #                   conf                          dir                     /etc/freeswitch                       true
-    #                   db                            dir                     /var/lib/freeswitch/db                true
-    #                   diaplan                       dir                     /etc/freeswitch/dialplan              false
-    #                   extensions                    dir                     /etc/freeswitch/directory             false
-    #                   grammar                       dir                     /usr/share/freeswitch/grammar         true
-    #                   log                           dir                     /var/log/freeswitch                   true
-    #                   mod                           dir                     /usr/lib/freeswitch/mod               true
-    #                   phrases                       dir                     /etc/freeswitch/lang                  false
-    #                   recordings                    dir                     /var/lib/freeswitch/recordings        true
-    #                   scripts                       dir                     /usr/share/freeswitch/scripts         true
-    #                   sip_profiles                  dir                     /etc/freeswitch/sip_profiles          false
-    #                   sounds                        dir                     /usr/share/freeswitch/sounds          true
-    #                   storage                       dir                     /var/lib/freeswitch/storage           true
-    #                   voicemail                     dir                     /var/lib/freeswitch/storage/voicemail true
-    # 4.  If the above three db checks pass, then we can assume the user has successfully updated the switch paths in Default Settings
-    #     We should now be able to proceed with the next steps 3(e).
+    # TO-DO:  Step 4
+    # Write the following changes to the db.  These will adjust the switch paths to those used by the package:
+    #   COLUMNS --> default_setting_subcategory   default_setting_name    default_setting_value                 default_setting_enabled
+    #               base                          dir                     /usr                                  true
+    #               bin                           dir                     null                                  true
+    #               call_center                   dir                     /etc/freeswitch/autoload_configs      false
+    #               conf                          dir                     /etc/freeswitch                       true
+    #               db                            dir                     /var/lib/freeswitch/db                true
+    #               diaplan                       dir                     /etc/freeswitch/dialplan              false
+    #               extensions                    dir                     /etc/freeswitch/directory             false
+    #               grammar                       dir                     /usr/share/freeswitch/grammar         true
+    #               log                           dir                     /var/log/freeswitch                   true
+    #               mod                           dir                     /usr/lib/freeswitch/mod               true
+    #               phrases                       dir                     /etc/freeswitch/lang                  false
+    #               recordings                    dir                     /var/lib/freeswitch/recordings        true
+    #               scripts                       dir                     /usr/share/freeswitch/scripts         true
+    #               sip_profiles                  dir                     /etc/freeswitch/sip_profiles          false
+    #               sounds                        dir                     /usr/share/freeswitch/sounds          true
+    #               storage                       dir                     /var/lib/freeswitch/storage           true
+    #               voicemail                     dir                     /var/lib/freeswitch/storage/voicemail true
+    echo "Now updating switch paths in FusionPBX's Default Settings ..."
+    
 
 
   # Step 5(a) 
