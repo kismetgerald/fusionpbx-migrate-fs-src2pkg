@@ -19,7 +19,7 @@ If all goes well, your installation of FusionPBX will be unaffected (i.e., any c
 An added benefit is that installing modules will be much easier – as simple as “apt-get install freeswitch-mod-shout” for example.  It’ll get installed, configured, and enabled for you.
 
 ##**Okay, some housekeeping:**##
-If you are as cautious as I am, and this server is a VPS – ##TAKE A SNAPSHOT NOW!!!##
+If you are as cautious as I am, and this server is a VPS – **TAKE A SNAPSHOT NOW!!!**
 If not a VPS, then you may want to opt for rename (_wherever a delete is specified_).  In case anything goes wrong, simply go back and rename the folders back to what they were.  I would recommend a suffix like “_old”.
 
 
