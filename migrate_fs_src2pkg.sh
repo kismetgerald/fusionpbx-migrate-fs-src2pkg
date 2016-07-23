@@ -118,7 +118,8 @@ main ()
 
     # Step 5(a) 
     echo "Deleting switch configs pulled down by the package install from /etc/freeswitch ..."
-    rm -rf /etc/freeswitch/*
+    rm -rf /etc/freeswitch/
+    mkdir /etc/freeswitch/
     echo "Done"
     echo
 
