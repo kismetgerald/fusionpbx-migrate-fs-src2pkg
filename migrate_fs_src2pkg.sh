@@ -68,7 +68,7 @@ main ()
       ./package-master-all.sh
     fi
 
-    # TO-DO:  Step 4
+    # Step 4
     # Write the following changes to the db.  These will adjust the switch paths to those used by the package:
     #   COLUMNS --> default_setting_subcategory   default_setting_name    default_setting_value                 default_setting_enabled
     #               base                          dir                     /usr                                  true
