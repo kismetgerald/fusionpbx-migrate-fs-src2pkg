@@ -249,19 +249,6 @@ echo "Checking for the existence of FreeSWITCH..."
   fi
 }
 
-getdb()
-{
-  # Check the two locations where the FusionPBX config file could be, and extract the database credentials
-  # which we will use to build our connection string
-  if [[ -f "/etc/fusionpbx/config.lua" ]]; then 
-    echo "Retrieving database info from /etc/fusionpbx/config.lua to build the connection string..."
-    dbconn=$(sed -rn 's/database\.system\s*=\s*"(.*)";/\1/p' /etc/fusionpbx/config.lua)
-  elif [[ -f "/usr/local/freeswitch/scripts/resources/config.lua" ]]; then
-    echo "Retrieving database info from /usr/local/freeswitch/scripts/resources/config.lua to build the connection string..."
-    dbconn=$(sed -rn 's/database\.system\s*=\s*"(.*)";/\1/p' /usr/local/freeswitch/scripts/resources/config.lua)
-  fi
-}
-
 LICENSE=$( cat << DELIM
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
