@@ -5,8 +5,8 @@ fs_path="/usr/local/freeswitch"
 fs_pkg_conf_dir="/etc/freeswitch"
 fpbx_path="/var/www/fusionpbx"
 fpbx_src_path="/usr/src/fusionpbx-install.sh/debian/resources/switch/"
-#TO-DO:  Read the db credentials (username & password) from /var/www/fusionpbx/resources/config.php and set it to a variable
-# Gonna use function getdb() to accomplish this and the results will be used to accomplish line #91
+f2b_jail_local="/etc/fail2ban/jail.local"
+f2b_jail_conf="/etc/fail2ban/jail.conf"
 
 # Functions
 main ()
@@ -16,8 +16,7 @@ main ()
 
   read -p "Shall we proceed? [Y/N] " -n 1 -r
   echo
-  if [[ $REPLY =~ ^[Yy]$ ]]
-  then
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
     detect_os
     switch_check
 
@@ -31,16 +30,15 @@ main ()
     # We first check if they exist then rename them
     # If they don't exist, then just rename and move on
     echo "Renaming ${fs_pkg_conf_dir} (if it exists) to ${fs_pkg_conf_dir}""_old"
-    if [ -d "${fs_pkg_conf_dir}" ] 
-      then mv "${fs_pkg_conf_dir}" "${fs_pkg_conf_dir}"\_old
+    if [ -d "${fs_pkg_conf_dir}" ]; then 
+      mv "${fs_pkg_conf_dir}" "${fs_pkg_conf_dir}"\_old
     fi
 
     echo "Renaming ${fs_path} to ${fs_path}""_old" 
     mv "${fs_path}" "${fs_path}"\_old
 
     echo "Checking for the FusionPBX install folder"
-    if [ -d "${fpbx_src_path}" ] 
-      then
+    if [ -d "${fpbx_src_path}" ]; then
         echo "FusionPBX install folder found at ${fpbx_src_path}, switching to it."
         cd ${fpbx_src_path}
       else
@@ -118,31 +116,59 @@ main ()
     cd ${fpbx_src_path}
 
 
-  # Step 5(a) 
-  echo "Deleting switch configs pulled down by the package install from /etc/freeswitch ..."
-  rm -rf /etc/freeswitch/*
-  echo "Done"
+    # Step 5(a) 
+    echo "Deleting switch configs pulled down by the package install from /etc/freeswitch ..."
+    rm -rf /etc/freeswitch/*
+    echo "Done"
 
-  # Step 5(b)
-  echo "Restoring switch configs from /usr/local/freeswitch_old/* to /etc/freeswitch ..."
-  cp -ar /usr/local/freeswitch_old/conf/* /etc/freeswitch
-  echo "Done"
+    # Step 5(b)
+    echo "Restoring switch configs from /usr/local/freeswitch_old/* to /etc/freeswitch ..."
+    cp -ar /usr/local/freeswitch_old/conf/* /etc/freeswitch
+    echo "Done"
 
-  # Step 5(c)
-  echo "Patching the lua.conf.xml file so it points to the new scripts directory ..."
-  sed -i 's~base_dir}/scripts~script_dir}~' /etc/freeswitch/autoload_configs/lua.conf.xml
+    # Step 5(c)
+    echo "Patching the lua.conf.xml file so it points to the new scripts directory ..."
+    sed -i 's~base_dir}/scripts~script_dir}~' /etc/freeswitch/autoload_configs/lua.conf.xml
+    echo "Done patching the lua.conf.xml file"
 
-  # Step 6
-  # Let's fix permissions and restart the various services.
-  cd "${fpbx_src_path}"
-  ./package-permissions.sh
-  systemctl daemon-reload
-  systemctl try-restart freeswitch
-  systemctl daemon-reload
-  systemctl restart php5-fpm
-  systemctl restart nginx
+    # Step 6
+    # Let's fix permissions and restart the various services.
+    echo "Fixing permissions and restarting the various services"
+    cd "${fpbx_src_path}"
+    ./package-permissions.sh
+    systemctl daemon-reload
+    systemctl try-restart freeswitch
+    systemctl daemon-reload
+    systemctl restart php5-fpm
+    systemctl restart nginx
+    echo "Done"
 
+    # Step 7
+    # Here we update Fail2Ban to look in /var/log/freeswitch/ for the switch logs
+    if [[ -f "${f2b_jail_local}" ]]; then
+      echo "Updating log file path in the /etc/fail2ban/jail.local file"
+      sed -i 's~usr/local/freeswitch/log/freeswitch.log~var/log/freeswitch/freeswitch.log~' /etc/fail2ban/jail.local
+      elif [[ -f "${f2b_jail_conf}" ]]; then
+        echo "Updating log file path in the /etc/fail2ban/jail.conf file"
+        sed -i 's~usr/local/freeswitch/log/freeswitch.log~var/log/freeswitch/freeswitch.log~' /etc/fail2ban/jail.conf
+    fi
 
+    echo "Restarting the Fail2Ban service ..."
+    systemctl restart fail2ban
+    echo "Done"
+
+    # Step 8
+    # Let's wrap-up
+    echo "${FINISH}"
+
+    read -p "Reboot the server? [Y/N] " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      echo "Rebooting server in 10 seconds"
+      echo "If you change your mind use Ctrl+C to interrupt the reboot."
+      sleep 10
+      sudo reboot
+    fi
 }
 
 detect_os ()
@@ -273,6 +299,29 @@ LICENSE=$( cat << DELIM
 # a proper backup should be easy to restore.  If you proceed without taking a backup, YOU ARE FULLY RESPONSIBLE!!!
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+DELIM
+)
+
+FINISH=$( cat << DELIM 
+# Congratulations, you have just completed an in-place migration of FreeSWITCH
+# from a source compilation to a package install.  Some final things to note:
+#
+# 1.  Log back into FusionPBX and check to make sure ALL modules have started and are running:
+#
+#     ADVANCED >> Modules
+#
+# 2.  This is optional, but I chose to reboot the server at this point.  
+#     When the server comes back up, login into FusionPBX and check the Sip Status page to make 
+#     sure your profiles have restarted.  That’s it, enjoy!
+#
+# 3.  And to wrap-up, you might consider bringing your system up-to-date via ADVANCED > UPGRADE.  
+#     I did run into some issues with the new changes that had been made with MOH, however, all 
+#
+#     If this is the case for you, follow the instructions provided by a member of the #fusionpbx 
+#     IRC channel:  http://pastebin.com/fHw0wDjb 
+#
+#     If you get this error when placing calls to *9664 to test MOH, then simply restart FreeSWITCH:
+#     < [ERR] mod_local_stream.c:814 Unknown source default >
 DELIM
 )
 
