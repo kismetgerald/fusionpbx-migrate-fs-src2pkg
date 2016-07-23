@@ -111,25 +111,34 @@ main ()
                       ('voicemail',     '/var/lib/freeswitch/storage/voicemail',       'true' )
                   ) AS v(subcategory,value,enabled)
             WHERE v.subcategory = v_default_settings.default_setting_subcategory;"
-    echo ""
     echo "Done updating switch path variables in the database ..."
     cd ${fpbx_src_path} || exit
+    echo
 
 
     # Step 5(a) 
     echo "Deleting switch configs pulled down by the package install from /etc/freeswitch ..."
     rm -rf /etc/freeswitch/*
     echo "Done"
+    echo
 
     # Step 5(b)
     echo "Restoring switch configs from /usr/local/freeswitch_old/* to /etc/freeswitch ..."
     cp -ar /usr/local/freeswitch_old/conf/* /etc/freeswitch
     echo "Done"
+    echo
 
     # Step 5(c)
     echo "Patching the lua.conf.xml file so it points to the new scripts directory ..."
     sed -i 's~base_dir}/scripts~script_dir}~' /etc/freeswitch/autoload_configs/lua.conf.xml
     echo "Done patching the lua.conf.xml file"
+    echo
+
+    # Step 5(d)
+    echo "Now running FusionPBX's App Defaults routine to ensure the switch scripts are in place"
+    cd /var/www/fusionpbx;php /var/www/fusionpbx/core/upgrade/upgrade.php
+    echo "Done"
+    echo
 
     # Step 6
     # Let's fix permissions and restart the various services.
@@ -156,10 +165,15 @@ main ()
     echo "Restarting the Fail2Ban service ..."
     systemctl restart fail2ban
     echo "Done"
+    sleep 3
+    echo
+    echo
 
     # Step 8
     # Let's wrap-up
     echo "${FINISH}"
+    echo
+    echo
 
     read -p "Reboot the server? [Y/N] " -n 1 -r
     echo
