@@ -40,13 +40,13 @@ main ()
     echo "Checking for the FusionPBX install folder"
     if [ -d "${fpbx_src_path}" ]; then
         echo "FusionPBX install folder found at ${fpbx_src_path}, switching to it."
-        cd ${fpbx_src_path}
+        cd ${fpbx_src_path} || exit
       else
         echo "FusionPBX install folder was not found, so let's get it."
-        cd /usr/src
+        cd /usr/src || exit
         git clone https://github.com/fusionpbx/fusionpbx-install.sh.git
         chmod 755 -R /usr/src/fusionpbx-install.sh
-        cd /usr/src/fusionpbx-install.sh/debian/resources/switch/
+        cd /usr/src/fusionpbx-install.sh/debian/resources/switch/ || exit
       fi
     fi
 
@@ -87,7 +87,7 @@ main ()
     #               storage                       dir                     /var/lib/freeswitch/storage           true
     #               voicemail                     dir                     /var/lib/freeswitch/storage/voicemail true
     echo "Now updating switch paths in FusionPBX's Default Settings ..."
-    cd /tmp
+    cd /tmp || exit
     sudo -u postgres -- psql -d fusionpbx -t -c "UPDATE v_default_settings
             SET default_setting_value = v.value,
                 default_setting_enabled = v.enabled
@@ -113,7 +113,7 @@ main ()
             WHERE v.subcategory = v_default_settings.default_setting_subcategory;"
     echo ""
     echo "Done updating switch path variables in the database ..."
-    cd ${fpbx_src_path}
+    cd ${fpbx_src_path} || exit
 
 
     # Step 5(a) 
@@ -134,7 +134,7 @@ main ()
     # Step 6
     # Let's fix permissions and restart the various services.
     echo "Fixing permissions and restarting the various services"
-    cd "${fpbx_src_path}"
+    cd "${fpbx_src_path}" || exit
     ./package-permissions.sh
     systemctl daemon-reload
     systemctl try-restart freeswitch
