@@ -55,7 +55,7 @@ main ()
     echo "Ready to install FreeSWITCH"
     sleep 2
     echo "Please make a selection: [1] Official Release [2], Official Release with ALL MODULES, or [3] Master Branch"
-    read answer
+    read -r answer
     if [[ ${answer} == 1 ]]; then 
       ./package-release.sh
 
@@ -181,7 +181,7 @@ detect_os ()
 
       if [ "${ID}" = "raspbian" ]; then
         os=${ID}
-        dist=`cut --delimiter='.' -f1 /etc/debian_version`
+        dist=$(cut --delimiter='.' -f1 /etc/debian_version)
       else
         os=${DISTRIB_ID}
         dist=${DISTRIB_CODENAME}
@@ -191,18 +191,18 @@ detect_os ()
         fi
       fi
 
-    elif [ `which lsb_release 2>/dev/null` ]; then
-      dist=`lsb_release -c | cut -f2`
-      os=`lsb_release -i | cut -f2 | awk '{ print tolower($1) }'`
+    elif [ $(which lsb_release 2>/dev/null) ]; then
+      dist=$(lsb_release -c | cut -f2)
+      os=$(lsb_release -i | cut -f2 | awk '{ print tolower($1) }')
 
     elif [ -e /etc/debian_version ]; then
       # some Debians have jessie/sid in their /etc/debian_version
       # while others have '6.0.7'
-      os=`cat /etc/issue | head -1 | awk '{ print tolower($1) }'`
+      os=$(cat /etc/issue | head -1 | awk '{ print tolower($1) }')
       if grep -q '/' /etc/debian_version; then
-        dist=`cut --delimiter='/' -f1 /etc/debian_version`
+        dist=$(cut --delimiter='/' -f1 /etc/debian_version)
       else
-        dist=`cut --delimiter='.' -f1 /etc/debian_version`
+        dist=$(cut --delimiter='.' -f1 /etc/debian_version)
       fi
 
     else
