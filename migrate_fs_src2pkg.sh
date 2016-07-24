@@ -135,7 +135,7 @@ main ()
 
     # Step 5(b)
     echo "Restoring switch configs from /usr/local/freeswitch_old/* to /etc/freeswitch ..."
-    cp -adrf "/usr/local/freeswitch_old/conf/*" /etc/freeswitch
+    cp -adrf /usr/local/freeswitch_old/conf/* /etc/freeswitch
     echo "Done"
     echo
 
