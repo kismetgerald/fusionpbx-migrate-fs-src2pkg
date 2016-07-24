@@ -24,6 +24,8 @@ main ()
     # First we stop the FreeSWITCH service
     echo "Stopping FreeSWITCH..."
     systemctl stop freeswitch
+    echo "Done"
+    echo
 
     # Step 2:
     # Rename existing directories which will prevent the package install
@@ -33,20 +35,24 @@ main ()
     if [ -d "${fs_pkg_conf_dir}" ]; then 
       mv "${fs_pkg_conf_dir}" "${fs_pkg_conf_dir}"\_old
     fi
+    echo
 
     echo "Renaming ${fs_path} to ${fs_path}""_old" 
     mv "${fs_path}" "${fs_path}"\_old
+    echo
 
     echo "Checking for the FusionPBX install folder"
     if [ -d "${fpbx_src_path}" ]; then
         echo "FusionPBX install folder found at ${fpbx_src_path}, switching to it."
         cd ${fpbx_src_path} || exit
+        echo
       else
         echo "FusionPBX install folder was not found, so let's get it."
         cd /usr/src || exit
         git clone https://github.com/fusionpbx/fusionpbx-install.sh.git
         chmod 755 -R /usr/src/fusionpbx-install.sh
         cd /usr/src/fusionpbx-install.sh/debian/resources/switch/ || exit
+        echo
       fi
     fi
 
@@ -54,8 +60,9 @@ main ()
     # Install FreeSWITCH
     echo "Ready to install FreeSWITCH"
     sleep 2
-    echo "Please make a selection: [1] Official Release [2], Official Release with ALL MODULES, or [3] Master Branch"
-    read -r answer
+    echo
+    read -r "Please make a selection: [1] Official Release [2], Official Release with ALL MODULES, or [3] Master Branch: " answer
+    #read -r answer
     if [[ ${answer} == 1 ]]; then 
       ./package-release.sh
 
@@ -65,6 +72,7 @@ main ()
     elif [[ ${answer} == 3 ]]; then 
       ./package-master-all.sh
     fi
+    echo
 
     # Step 4
     # Write the following changes to the db.  These will adjust the switch paths to those used by the package:
@@ -118,13 +126,16 @@ main ()
 
     # Step 5(a) 
     echo "Deleting switch configs pulled down by the package install from /etc/freeswitch ..."
-    rm -Rf /etc/freeswitch/*
+    rm -Rf "/etc/freeswitch/*"
+    if [[ ! -e "${fs_pkg_conf_dir}" ]]; then
+      mkdir "${fs_pkg_conf_dir}"
+    fi
     echo "Done"
     echo
 
     # Step 5(b)
     echo "Restoring switch configs from /usr/local/freeswitch_old/* to /etc/freeswitch ..."
-    cp -ar /usr/local/freeswitch_old/conf/* /etc/freeswitch
+    cp -adrf "/usr/local/freeswitch_old/conf/*" /etc/freeswitch
     echo "Done"
     echo
 
@@ -166,6 +177,7 @@ main ()
     systemctl restart php5-fpm
     systemctl restart nginx
     echo "Done"
+    echo
 
     # Step 7
     # Here we update Fail2Ban to look in /var/log/freeswitch/ for the switch logs
@@ -176,6 +188,7 @@ main ()
         echo "Updating log file path in the /etc/fail2ban/jail.conf file"
         sed -i 's~usr/local/freeswitch/log/freeswitch.log~var/log/freeswitch/freeswitch.log~' /etc/fail2ban/jail.conf
     fi
+    echo
 
     echo "Restarting the Fail2Ban service ..."
     systemctl restart fail2ban
