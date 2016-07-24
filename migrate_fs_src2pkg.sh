@@ -61,7 +61,7 @@ main ()
     echo "Ready to install FreeSWITCH"
     sleep 2
     echo
-    read -r "Please make a selection: [1] Official Release [2], Official Release with ALL MODULES, or [3] Master Branch: " answer
+    read -p "Please make a selection: [1] Official Release [2], Official Release with ALL MODULES, or [3] Master Branch: " answer
     #read -r answer
     if [[ ${answer} == 1 ]]; then 
       ./package-release.sh
