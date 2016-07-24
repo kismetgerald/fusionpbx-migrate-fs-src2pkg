@@ -139,7 +139,7 @@ main ()
     # Here, we remove mod_vp8 from the database and patch the modules.conf.xml file accordingly
     echo "Now removing mod_vp8 from the v_modules tables in the PostgreSQL database"
     cd /tmp || exit
-    sudo -u postgres -- psql -d fusionpbx -t -c "DELETE from v_modules WHERE module_name = mod_vp8;"
+    sudo -u postgres -- psql -d fusionpbx -t -c "DELETE from v_modules WHERE module_name = 'mod_vp8';"
     cd ${fpbx_src_path} || exit
     echo "Done"
     echo
