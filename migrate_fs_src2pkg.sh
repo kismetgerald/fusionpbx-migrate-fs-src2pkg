@@ -118,8 +118,7 @@ main ()
 
     # Step 5(a) 
     echo "Deleting switch configs pulled down by the package install from /etc/freeswitch ..."
-    rm -rf /etc/freeswitch/
-    mkdir /etc/freeswitch/
+    rm -Rf /etc/freeswitch/*
     echo "Done"
     echo
 
@@ -136,6 +135,21 @@ main ()
     echo
 
     # Step 5(d)
+    # As of 02/14/2016, FreeSWITCH has mod_vpx built into the core thus no longer needing mod_vp8
+    # Here, we remove mod_vp8 from the database and patch the modules.conf.xml file accordingly
+    echo "Now removing mod_vp8 from the v_modules tables in the PostgreSQL database"
+    cd /tmp || exit
+    sudo -u postgres -- psql -d fusionpbx -t -c "DELETE from v_modules WHERE module_name = mod_vp8;"
+    cd ${fpbx_src_path} || exit
+    echo "Done"
+    echo
+
+    echo "Now patching the modules.conf.xml file to prevent mod_vp8 from being loaded with FreeSWITCH"
+    sed -i '/load module="mod_vp8"/d' /etc/freeswitch/autoload_configs/modules.conf.xml
+    echo "Done"
+    echo
+
+    # Step 5(e)
     echo "Now running FusionPBX's App Defaults routine to ensure the switch scripts are in place"
     cd /var/www/fusionpbx;php /var/www/fusionpbx/core/upgrade/upgrade.php
     echo "Done"
