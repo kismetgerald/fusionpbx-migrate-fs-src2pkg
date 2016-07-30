@@ -1,12 +1,18 @@
 #!/bin/bash
 
 #Define global variables
-fs_path="/usr/local/freeswitch"
-fs_pkg_conf_dir="/etc/freeswitch"
+f2b_jail_conf="/etc/fail2ban/jail.conf"
+f2b_jail_local="/etc/fail2ban/jail.local"
 fpbx_path="/var/www/fusionpbx"
 fpbx_src_path="/usr/src/fusionpbx-install.sh/debian/resources/switch/"
-f2b_jail_local="/etc/fail2ban/jail.local"
-f2b_jail_conf="/etc/fail2ban/jail.conf"
+fs_path="/usr/local/freeswitch"
+fs_pkg_conf_dir="/etc/freeswitch"
+fs_pkg_rec_path="/var/lib/freeswitch/recordings"
+fs_pkg_sounds_path="/usr/share/freeswitch/sounds"
+fs_pkg_storage_path="/var/lib/freeswitch/storage"
+fs_src_rec_path="/usr/local/freeswitch/recordings/"
+fs_src_sounds_path="/usr/local/freeswitch/sounds/"
+fs_src_storage_path="/usr/local/freeswitch/storage/"
 
 # Functions
 main ()
@@ -140,12 +146,30 @@ main ()
     echo
 
     # Step 5(c)
+    echo "Restoring switch recordings from ${fs_src_rec_path} to ${fs_pkg_rec_path} ..."
+    cp -adrf /usr/local/freeswitch_old/recordings/* ${fs_pkg_rec_path}
+    echo "Done"
+    echo
+
+    # Step 5(d)
+    echo "Restoring switch sounds from ${fs_src_sounds_path} to ${fs_pkg_sounds_path} ..."
+    cp -adrf /usr/local/freeswitch_old/sounds/* ${fs_pkg_sounds_path}
+    echo "Done"
+    echo
+
+    # Step 5(e)
+    echo "Restoring switch storage (Voicemails & Faxes) from ${fs_src_storage_path} to ${fs_pkg_storage_path} ..."
+    cp -adrf /usr/local/freeswitch_old/storage/* ${fs_pkg_storage_path}
+    echo "Done"
+    echo
+
+    # Step 5(f)
     echo "Patching the lua.conf.xml file so it points to the new scripts directory ..."
     sed -i 's~base_dir}/scripts~script_dir}~' /etc/freeswitch/autoload_configs/lua.conf.xml
     echo "Done patching the lua.conf.xml file"
     echo
 
-    # Step 5(d)
+    # Step 5(g)
     # As of 02/14/2016, FreeSWITCH has mod_vpx built into the core thus no longer needing mod_vp8
     # Here, we remove mod_vp8 from the database and patch the modules.conf.xml file accordingly
     echo "Now removing mod_vp8 from the v_modules tables in the PostgreSQL database"
@@ -160,7 +184,7 @@ main ()
     echo "Done"
     echo
 
-    # Step 5(e)
+    # Step 5(h)
     echo "Now running FusionPBX's App Defaults routine to ensure the switch scripts are in place"
     cd /var/www/fusionpbx;php /var/www/fusionpbx/core/upgrade/upgrade.php
     echo "Done"
