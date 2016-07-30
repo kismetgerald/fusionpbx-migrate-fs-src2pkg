@@ -230,10 +230,21 @@ main ()
     read -p "Reboot the server? [Y/N] " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-      echo "Rebooting server in 10 seconds"
-      echo "If you change your mind use Ctrl+C to interrupt the reboot."
-      sleep 10
+      echo "CONGRATULATIONS!  You have successfully migrated your FreeSWITCH server from source compile to packages."
+      echo "Your system will now reboot, however, if you change your mind use Ctrl+C to interrupt the reboot."
+      echo "If this script can be improved upon, please email me at kagbasi@digitainc.com or fork my Github Repo"
+      echo "Thank you!"
+      secs=$((10))
+      while [ $secs -gt 0 ]; do
+        echo -ne "System Reboot will occur in: $secs seconds\033[0K\r"
+        sleep 1
+        : $((secs--))
+      done
       sudo reboot
+    else
+      echo "CONGRATULATIONS! You have successfully migrated your FreeSWITCH server from source compile to packages."
+      echo "If this script can be improved upon, please email me at kagbasi@digitainc.com or fork my Github Repo"
+      echo "Thank you!"
     fi
 }
 
@@ -368,7 +379,7 @@ FINISH=$( cat << DELIM
 #     sure your profiles have restarted.  That’s it, enjoy!
 #
 # 3.  And to wrap-up, you might consider bringing your system up-to-date via ADVANCED > UPGRADE.  
-#     I did run into some issues with the new changes that had been made with MOH, however, all 
+#     I did run into some issues with the new changes that had been made with MOH. 
 #
 #     If this is the case for you, follow the instructions provided by a member of the #fusionpbx 
 #     IRC channel:  http://pastebin.com/fHw0wDjb 
@@ -379,8 +390,6 @@ DELIM
 )
 
 # BEGIN SCRIPT EXECUTION
-getdb
 main
-echo "Done!"
 echo
 exit
