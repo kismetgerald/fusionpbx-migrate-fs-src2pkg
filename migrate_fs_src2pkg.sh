@@ -433,7 +433,7 @@ LICENSE=$( cat << DELIM
 #
 # This script will automatically check your system to ensure it is supported and that a source installation
 # of FreeSWITCH actually exists.  The standard path ($fs_path) is used for this check.
-# Additionally, there are some files we will need from the FusionPBX installation directorys, so if you don't have
+# Additionally, there are some files we will need from the FusionPBX installation directories, so if you don't have
 # them this script will fetch them for you and place them in ($fpbx_path).
 #
 # NOTE:  If the FreeSWITCH path is not detected this script will not continue!!!
