@@ -63,13 +63,13 @@ main ()
         exit 1
     fi
     echo
-    echo "Checking for the FusionPBX install folder"
+    echo "Checking for the FusionPBX install directory"
     if [ -d "${fpbx_src_path}" ]; then
-        echo "FusionPBX install folder found at ${fpbx_src_path}."
+        echo "FusionPBX install directory found at ${fpbx_src_path}."
         cd ${fpbx_src_path} || exit
         echo
     else
-        echo "FusionPBX install folder was not found, so let's get it."
+        echo "FusionPBX install directory was not found, so let's get it."
         cd /usr/src
         if [ $? -ne 0 ]; then
             echo "Couldn't find /usr/src. Exiting."
@@ -433,7 +433,7 @@ LICENSE=$( cat << DELIM
 #
 # This script will automatically check your system to ensure it is supported and that a source installation
 # of FreeSWITCH actually exists.  The standard path ($fs_path) is used for this check.
-# Additionally, there are some files we will need from the FusionPBX installation folders, so if you don't have
+# Additionally, there are some files we will need from the FusionPBX installation directorys, so if you don't have
 # them this script will fetch them for you and place them in ($fpbx_path).
 #
 # NOTE:  If the FreeSWITCH path is not detected this script will not continue!!!
